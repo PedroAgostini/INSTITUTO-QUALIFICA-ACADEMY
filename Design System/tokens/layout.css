@@ -1,0 +1,15 @@
+/* Meridian — layout: containers, grid, breakpoints */
+:root {
+  --container-max: 1200px;   /* conteúdo padrão */
+  --container-wide: 1440px;  /* heros, mapas, full-bleed controlado */
+  --container-prose: 720px;  /* texto corrido */
+
+  --gutter-desktop: 24px;  /* 12 colunas, margem 64px */
+  --gutter-tablet: 20px;   /* 8 colunas, margem 32px */
+  --gutter-mobile: 16px;   /* 4 colunas, margem 20px */
+
+  --bp-sm: 640px;
+  --bp-md: 900px;
+  --bp-lg: 1200px;
+  --bp-xl: 1440px;
+}

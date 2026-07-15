@@ -1,0 +1,108 @@
+/* Meridian — cores. Base + aliases semânticos. Tema claro é o default; escuro via [data-theme="dark"]. */
+:root {
+  /* Signal — âmbar de marca (dados em movimento, CTAs, destaque) */
+  --signal-300: oklch(0.88 0.10 80);
+  --signal-400: oklch(0.82 0.14 72);
+  --signal-500: oklch(0.76 0.16 64);  /* primária */
+  --signal-600: oklch(0.66 0.15 58);  /* texto sobre claro */
+  --signal-700: oklch(0.56 0.13 52);
+
+  /* Pulse — ciano secundário (dataviz, informação) */
+  --pulse-300: oklch(0.85 0.09 215);
+  --pulse-400: oklch(0.78 0.12 215);
+  --pulse-500: oklch(0.70 0.12 220);
+  --pulse-600: oklch(0.58 0.11 225);
+
+  /* Void — neutros escuros (infraestrutura) */
+  --void-950: #07090D;
+  --void-900: #0B0E14;
+  --void-850: #10141C;
+  --void-800: #161B24;
+  --void-700: #202734;
+  --void-600: #2C3543;
+
+  /* Fog — texto/linhas sobre escuro */
+  --fog-100: #F2F4F8;
+  --fog-300: #B9C1CE;
+  --fog-500: #8B95A7;
+  --fog-700: #4A5261;
+
+  /* Paper — neutros claros quentes (editorial) */
+  --paper-0: #FFFFFF;
+  --paper-50: #FAF9F7;
+  --paper-100: #F3F1ED;
+  --paper-200: #E7E4DE;
+  --paper-300: #D5D1C9;
+
+  /* Ink — texto sobre claro */
+  --ink-900: #14181F;
+  --ink-600: #4A5261;
+  --ink-400: #7C8494;
+
+  /* Funcionais — croma/luminosidade uniformes */
+  --ok-500: oklch(0.72 0.14 155);
+  --ok-600: oklch(0.58 0.13 155);
+  --warn-500: oklch(0.76 0.14 78);
+  --warn-600: oklch(0.60 0.13 70);
+  --error-500: oklch(0.64 0.19 27);
+  --error-600: oklch(0.54 0.18 27);
+  --info-500: var(--pulse-500);
+  --info-600: var(--pulse-600);
+
+  /* Ember — ameaça/bloqueio em mapas */
+  --ember-500: oklch(0.64 0.19 35);
+
+  /* Dataviz — categórico, croma uniforme */
+  --viz-1: oklch(0.76 0.16 64);   /* signal */
+  --viz-2: oklch(0.76 0.12 215);  /* pulse */
+  --viz-3: oklch(0.76 0.13 155);  /* verde */
+  --viz-4: oklch(0.76 0.13 310);  /* violeta */
+  --viz-5: oklch(0.76 0.14 350);  /* magenta */
+  --viz-grid: color-mix(in oklab, var(--fog-500) 25%, transparent);
+
+  /* Gradientes (únicos permitidos) */
+  --grad-ember: linear-gradient(135deg, oklch(0.80 0.15 78), oklch(0.66 0.18 40));
+  --grad-horizon: radial-gradient(120% 90% at 50% 0%, #131926 0%, #0B0E14 55%, #07090D 100%);
+
+  /* Aliases semânticos — tema claro */
+  --surface-page: var(--paper-50);
+  --surface-card: var(--paper-0);
+  --surface-raised: var(--paper-0);
+  --surface-inset: var(--paper-100);
+  --border-subtle: #E4E1DA;
+  --border-strong: #C9C5BC;
+  --text-primary: var(--ink-900);
+  --text-secondary: var(--ink-600);
+  --text-muted: var(--ink-400);
+  --accent: var(--signal-500);
+  --accent-strong: var(--signal-600);
+  --accent-text: var(--signal-700);
+  --text-on-accent: var(--void-950);
+  --focus-ring: var(--pulse-600);
+  --link: var(--signal-700);
+  --link-hover: var(--signal-600);
+
+  /* Signal Flood — exceção documentada: âmbar full-bleed em no máx. 1 momento
+     por página (CTA final ou campanha). Texto sempre Void; botões em Paper. */
+  --surface-flood: var(--signal-500);
+  --text-on-flood: var(--void-950);
+}
+
+[data-theme="dark"] {
+  --surface-page: var(--void-900);
+  --surface-card: var(--void-850);
+  --surface-raised: var(--void-800);
+  --surface-inset: var(--void-950);
+  --border-subtle: rgba(185, 193, 206, 0.12);
+  --border-strong: rgba(185, 193, 206, 0.24);
+  --text-primary: var(--fog-100);
+  --text-secondary: var(--fog-300);
+  --text-muted: var(--fog-500);
+  --accent: var(--signal-500);
+  --accent-strong: var(--signal-400);
+  --accent-text: var(--signal-400);
+  --text-on-accent: var(--void-950);
+  --focus-ring: var(--pulse-400);
+  --link: var(--signal-400);
+  --link-hover: var(--signal-300);
+}

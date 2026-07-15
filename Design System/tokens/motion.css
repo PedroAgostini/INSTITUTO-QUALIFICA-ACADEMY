@@ -1,0 +1,33 @@
+/* Meridian — motion. Movimento = latência visível: rápido e estável. */
+:root {
+  --dur-fast: 120ms;   /* feedback de clique */
+  --dur-base: 200ms;   /* hover, troca de estado */
+  --dur-slow: 320ms;   /* entradas, modais */
+  --dur-story: 600ms;  /* narrativa de scroll, count-up */
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);     /* entradas */
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);  /* transições de layout */
+  --ease-linear: linear;                          /* loops de dados apenas */
+
+  /* Regras: animar só transform/opacity; loops pausam fora do viewport;
+     entrada de seção: fade + translateY(8px), stagger 60ms;
+     hover de card: translateY(-2px), nunca scale > 1.02. */
+}
+
+@keyframes ds-spin { to { transform: rotate(360deg); } }
+@keyframes ds-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes ds-dash { to { stroke-dashoffset: -24; } }
+@keyframes ds-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+@keyframes ds-spin { to { transform: rotate(360deg); } }
+@keyframes ds-blink { 50% { opacity: 0; } }
+@keyframes ds-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes ds-ticker { to { transform: translateX(-50%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

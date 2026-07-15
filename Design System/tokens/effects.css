@@ -1,0 +1,32 @@
+/* Meridian — raios, bordas, sombras, opacidade, blur, z-index */
+:root {
+  --radius-xs: 4px;   /* badges, tags */
+  --radius-sm: 8px;   /* botões, inputs */
+  --radius-md: 12px;  /* cards */
+  --radius-lg: 16px;  /* cards grandes, modais */
+  --radius-xl: 24px;  /* heros, painéis */
+  --radius-full: 999px;
+
+  --border-w: 1px;
+  --border-w-strong: 1.5px;
+
+  /* Sombras — discretas; profundidade vem mais de borda+fundo que de sombra */
+  --shadow-sm: 0 1px 2px rgba(7, 9, 13, 0.06);
+  --shadow-md: 0 4px 16px rgba(7, 9, 13, 0.08);
+  --shadow-lg: 0 12px 40px rgba(7, 9, 13, 0.14);
+  --shadow-glow: 0 0 12px 2px color-mix(in oklab, var(--signal-500) 35%, transparent);
+  --shadow-glow-pulse: 0 0 12px 2px color-mix(in oklab, var(--pulse-400) 35%, transparent);
+
+  --opacity-disabled: 0.45;
+  --opacity-overlay: 0.6;   /* scrim de modal sobre void-950 */
+  --blur-overlay: 12px;     /* header sticky, painéis translúcidos */
+
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;   /* header */
+  --z-dropdown: 200; /* mega menu */
+  --z-overlay: 300;  /* scrim */
+  --z-modal: 400;
+  --z-tooltip: 500;
+  --z-toast: 600;
+}
