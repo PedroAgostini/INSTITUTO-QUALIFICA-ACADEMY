@@ -196,39 +196,71 @@ document.querySelectorAll("[data-feedback-carousel]").forEach((carousel) => {
 
   if (!track || slides.length === 0) return;
 
-  const getCarouselMetrics = () => {
-    const viewport = carousel.querySelector(".student-carousel-viewport");
-    const slide = slides[0];
-    const trackStyles = getComputedStyle(track);
-    const gap = Number.parseFloat(trackStyles.columnGap || trackStyles.gap) || 0;
-    const step = slide.offsetWidth + gap;
-    const visibleCount = Math.max(1, Math.round((viewport.clientWidth + gap) / step));
-    const maxIndex = Math.max(slides.length - visibleCount, 0);
-    return { step, visibleCount, maxIndex };
+  const videoFrames = Array.from(carousel.querySelectorAll(".video-frame"));
+  const videos = Array.from(carousel.querySelectorAll(".review-video"));
+
+  const pauseVideo = (video) => {
+    if (!video || video.paused) return;
+    video.pause();
   };
 
+  videoFrames.forEach((frame) => {
+    const video = frame.querySelector(".review-video");
+    const playButton = frame.querySelector(".video-play");
+
+    if (!video) return;
+
+    frame.classList.add("has-video");
+
+    playButton?.addEventListener("click", async () => {
+      if (video.paused) {
+        videos.forEach((otherVideo) => {
+          if (otherVideo !== video) pauseVideo(otherVideo);
+        });
+
+        try {
+          await video.play();
+        } catch {
+          frame.classList.remove("is-playing");
+        }
+      } else {
+        video.pause();
+      }
+    });
+
+    video.addEventListener("play", () => frame.classList.add("is-playing"));
+    video.addEventListener("pause", () => frame.classList.remove("is-playing"));
+    video.addEventListener("ended", () => frame.classList.remove("is-playing"));
+  });
+
+  const loopIndex = (index) => (index + slides.length) % slides.length;
+
   const updateCarousel = (nextIndex) => {
-    const { step, visibleCount, maxIndex } = getCarouselMetrics();
-    if (nextIndex < 0) activeIndex = maxIndex;
-    else if (nextIndex > maxIndex) activeIndex = 0;
-    else activeIndex = nextIndex;
+    activeIndex = loopIndex(nextIndex);
+    const prevIndex = loopIndex(activeIndex - 1);
+    const nextVisibleIndex = loopIndex(activeIndex + 1);
 
-    track.style.transform = `translateX(-${activeIndex * step}px)`;
+    track.style.transform = "";
     if (current) current.textContent = String(activeIndex + 1).padStart(2, "0");
-    if (total) total.textContent = String(maxIndex + 1).padStart(2, "0");
-
-    const featuredIndex = activeIndex + Math.min(visibleCount - 1, 1);
+    if (total) total.textContent = String(slides.length).padStart(2, "0");
 
     slides.forEach((slide, index) => {
-      const isActive = index >= activeIndex && index < activeIndex + visibleCount;
+      let position = "hidden";
+      if (index === activeIndex) position = "current";
+      else if (index === prevIndex) position = "prev";
+      else if (index === nextVisibleIndex) position = "next";
+
+      const isActive = position !== "hidden";
       slide.classList.toggle("is-active", isActive);
-      slide.classList.toggle("is-featured", index === featuredIndex);
+      slide.classList.toggle("is-featured", index === activeIndex);
+      slide.dataset.carouselPosition = position;
       slide.setAttribute("aria-hidden", String(!isActive));
+      if (!isActive) pauseVideo(slide.querySelector(".review-video"));
     });
 
     dots.forEach((dot, index) => {
       const isActive = index === activeIndex;
-      dot.hidden = index > maxIndex;
+      dot.hidden = index >= slides.length;
       dot.classList.toggle("is-active", isActive);
       dot.setAttribute("aria-current", isActive ? "true" : "false");
     });
@@ -239,6 +271,19 @@ document.querySelectorAll("[data-feedback-carousel]").forEach((carousel) => {
 
   dots.forEach((dot, index) => {
     dot.addEventListener("click", () => updateCarousel(index));
+  });
+
+  slides.forEach((slide, index) => {
+    slide.addEventListener(
+      "click",
+      (event) => {
+        if (index === activeIndex) return;
+        event.preventDefault();
+        event.stopPropagation();
+        updateCarousel(index);
+      },
+      true
+    );
   });
 
   carousel.addEventListener("keydown", (event) => {
@@ -329,78 +374,4 @@ if (!reduceMotion && "IntersectionObserver" in window) {
   );
 
   document.querySelectorAll(".proof-bar dt").forEach((metric) => countObserver.observe(metric));
-}
-
-const canvas = document.querySelector(".energy-canvas");
-
-if (canvas && !reduceMotion) {
-  const context = canvas.getContext("2d");
-  let width = 0;
-  let height = 0;
-  let animationFrame = 0;
-  const points = Array.from({ length: 38 }, () => ({
-    x: Math.random(),
-    y: Math.random(),
-    vx: (Math.random() - 0.5) * 0.00018,
-    vy: (Math.random() - 0.5) * 0.00018,
-    pulse: Math.random() * Math.PI * 2
-  }));
-
-  const resizeCanvas = () => {
-    const rect = canvas.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    width = rect.width;
-    height = rect.height;
-    canvas.width = Math.max(1, Math.floor(width * dpr));
-    canvas.height = Math.max(1, Math.floor(height * dpr));
-    context.setTransform(dpr, 0, 0, dpr, 0, 0);
-  };
-
-  const draw = (time) => {
-    context.clearRect(0, 0, width, height);
-
-    points.forEach((point) => {
-      point.x += point.vx * 16;
-      point.y += point.vy * 16;
-      if (point.x < 0.02 || point.x > 0.98) point.vx *= -1;
-      if (point.y < 0.08 || point.y > 0.92) point.vy *= -1;
-    });
-
-    for (let i = 0; i < points.length; i += 1) {
-      for (let j = i + 1; j < points.length; j += 1) {
-        const a = points[i];
-        const b = points[j];
-        const ax = a.x * width;
-        const ay = a.y * height;
-        const bx = b.x * width;
-        const by = b.y * height;
-        const distance = Math.hypot(ax - bx, ay - by);
-        if (distance < 160) {
-          const alpha = (1 - distance / 160) * 0.18;
-          context.strokeStyle = `rgba(185, 141, 255, ${alpha})`;
-          context.lineWidth = 1;
-          context.beginPath();
-          context.moveTo(ax, ay);
-          context.lineTo(bx, by);
-          context.stroke();
-        }
-      }
-    }
-
-    points.forEach((point) => {
-      const x = point.x * width;
-      const y = point.y * height;
-      const radius = 1.4 + Math.sin(time / 700 + point.pulse) * 0.55;
-      context.fillStyle = "rgba(185, 141, 255, 0.76)";
-      context.beginPath();
-      context.arc(x, y, radius, 0, Math.PI * 2);
-      context.fill();
-    });
-
-    animationFrame = requestAnimationFrame(draw);
-  };
-
-  resizeCanvas();
-  window.addEventListener("resize", resizeCanvas);
-  animationFrame = requestAnimationFrame(draw);
 }
