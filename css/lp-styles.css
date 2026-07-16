@@ -212,7 +212,7 @@ h3 {
   border: 1px solid transparent;
   border-radius: 8px;
   background: var(--accent);
-  color: var(--text-on-accent);
+  color: #fff;
   box-shadow: 0 12px 32px rgba(143, 77, 255, 0.24);
   padding: 12px 20px;
   font-family: var(--font-body);
@@ -6398,5 +6398,35 @@ body::before {
   .benefit-grid article:nth-child(1) h3,
   .benefit-grid article:nth-child(6) h3 {
     margin-top: 4px;
+  }
+}
+
+/* Home hero banners */
+.hero {
+  background:
+    linear-gradient(90deg, rgba(8, 10, 15, 0.96) 0%, rgba(8, 10, 15, 0.88) 34%, rgba(8, 10, 15, 0.46) 62%, rgba(8, 10, 15, 0.56) 100%),
+    radial-gradient(760px 420px at 72% 18%, rgba(143, 77, 255, 0.24), transparent 68%),
+    url("../assets/images/banner-desk.webp") center / cover no-repeat,
+    var(--void-950);
+}
+
+.hero-media {
+  display: none;
+}
+
+.btn,
+.btn:visited,
+.btn:hover,
+.btn:active {
+  color: #fff;
+}
+
+@media (max-width: 720px) {
+  .hero {
+    background:
+      linear-gradient(180deg, rgba(8, 10, 15, 0.54) 0%, rgba(8, 10, 15, 0.72) 42%, rgba(8, 10, 15, 0.95) 100%),
+      radial-gradient(340px 260px at 52% 40%, rgba(143, 77, 255, 0.24), transparent 72%),
+      url("../assets/images/banner-mobile.webp") center top / cover no-repeat,
+      var(--void-950);
   }
 }
