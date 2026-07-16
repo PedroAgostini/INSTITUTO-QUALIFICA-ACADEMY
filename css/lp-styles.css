@@ -452,6 +452,10 @@ h3 {
 
 .hero {
   position: relative;
+  width: 100%;
+  max-width: none;
+  margin-right: 0;
+  margin-left: 0;
   overflow: hidden;
   padding: 0;
   background:
@@ -472,11 +476,18 @@ h3 {
 .hero-grid {
   position: relative;
   display: grid;
+  width: min(100% - 40px, 1440px);
   min-height: 610px;
   grid-template-columns: minmax(0, 1fr) minmax(420px, 1fr);
   gap: 34px;
   align-items: center;
   padding: 118px 0 28px;
+}
+
+@media (max-width: 1600px) {
+  .hero-grid {
+    width: min(1200px, calc(100% - 40px));
+  }
 }
 
 .hero-copy {
@@ -542,6 +553,10 @@ h3 {
 .ticker {
   position: relative;
   z-index: 3;
+  width: 100%;
+  max-width: none;
+  margin-right: 0;
+  margin-left: 0;
   overflow: hidden;
   border-top: 1px solid rgba(185, 193, 206, 0.12);
   border-bottom: 1px solid rgba(185, 193, 206, 0.12);
@@ -6408,6 +6423,16 @@ body::before {
     radial-gradient(760px 420px at 72% 18%, rgba(143, 77, 255, 0.24), transparent 68%),
     url("../assets/images/banner-desk.webp") center / cover no-repeat,
     var(--void-950);
+}
+
+@media (min-width: 1601px) {
+  .hero {
+    background:
+      linear-gradient(90deg, rgba(8, 10, 15, 0.96) 0%, rgba(8, 10, 15, 0.88) 34%, rgba(8, 10, 15, 0.46) 62%, rgba(8, 10, 15, 0.56) 100%),
+      radial-gradient(760px 420px at 72% 18%, rgba(143, 77, 255, 0.24), transparent 68%),
+      url("../assets/images/banner-desk.webp") center 28% / cover no-repeat,
+      var(--void-950);
+  }
 }
 
 .hero-media {
