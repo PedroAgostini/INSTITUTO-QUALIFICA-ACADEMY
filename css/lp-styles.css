@@ -5590,7 +5590,7 @@ body::before {
   }
 
   .reels-carousel {
-    --reel-mobile-width: clamp(196px, min(60vw, calc((100svh - 360px) * 0.5625)), 220px);
+    --reel-mobile-width: min(60vw, 220px);
     max-width: min(318px, 100%);
   }
 
@@ -5674,6 +5674,38 @@ body::before {
   .reels-carousel .carousel-dots {
     margin-top: -22px;
     padding: 0 12px 18px;
+  }
+
+  @media (max-height: 780px) {
+    .feedbacks-minimal-head {
+      margin-bottom: 10px;
+    }
+
+    .feedbacks-minimal-head h2 {
+      font-size: clamp(28px, 8vw, 32px);
+    }
+
+    .reels-carousel {
+      --reel-mobile-width: min(54vw, 196px);
+    }
+
+    .reels-carousel .carousel-top {
+      top: 12px;
+    }
+
+    .reels-carousel .student-carousel-viewport {
+      padding-top: 12px;
+    }
+  }
+
+  @media (max-height: 690px) {
+    .feedbacks-minimal-head h2 {
+      font-size: clamp(26px, 7.4vw, 30px);
+    }
+
+    .reels-carousel {
+      --reel-mobile-width: min(50vw, 180px);
+    }
   }
 
   .video-copy h3 {
