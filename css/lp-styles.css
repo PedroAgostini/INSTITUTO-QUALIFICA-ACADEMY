@@ -7329,12 +7329,6 @@ body::before {
 
 .hero-copy .hero-title {
   text-wrap: auto;
-}
-
-.hero-copy .hero-title span {
-  display: block;
-  width: max-content;
-  max-width: 100%;
   white-space: nowrap;
 }
 
