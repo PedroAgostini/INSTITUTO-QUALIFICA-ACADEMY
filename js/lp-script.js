@@ -16,6 +16,160 @@ if (document.readyState === "loading") {
 
 window.addEventListener("load", paintIcons);
 
+(() => {
+  const COOKIE_NAME = "qualifica_cookie_consent";
+  const COOKIE_MAX_AGE = 60 * 60 * 24 * 180;
+  const CONSENT_ACCEPTED = "accepted";
+  const CONSENT_REJECTED = "rejected";
+
+  const copy = {
+    en: {
+      title: "We use cookies",
+      body: "We use essential cookies and, with your consent, analytics and advertising cookies to measure campaigns and improve your experience.",
+      accept: "Accept all",
+      reject: "Reject",
+      policy: "Privacy Policy"
+    },
+    "pt-br": {
+      title: "Usamos cookies",
+      body: "Usamos cookies essenciais e, com seu consentimento, cookies de análise e publicidade para medir campanhas e melhorar sua experiência.",
+      accept: "Aceitar todos",
+      reject: "Recusar",
+      policy: "Política de Privacidade"
+    },
+    es: {
+      title: "Usamos cookies",
+      body: "Usamos cookies esenciales y, con tu consentimiento, cookies de analítica y publicidad para medir campañas y mejorar tu experiencia.",
+      accept: "Aceptar todo",
+      reject: "Rechazar",
+      policy: "Política de Privacidad"
+    }
+  };
+
+  const getLang = () => {
+    const lang = document.documentElement.lang.toLowerCase();
+    if (lang.startsWith("pt")) return "pt-br";
+    if (lang.startsWith("es")) return "es";
+    return "en";
+  };
+
+  const getPolicyHref = (lang) => {
+    if (lang === "pt-br") return "/pt-br/politica-de-privacidade/";
+    if (lang === "es") return "/es/politica-de-privacidad/";
+    return "/privacy-policy/";
+  };
+
+  const getConsent = () => {
+    const match = document.cookie.match(new RegExp(`(?:^|; )${COOKIE_NAME}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : "";
+  };
+
+  const setConsent = (value) => {
+    const secure = window.location.protocol === "https:" ? "; Secure" : "";
+    document.cookie = `${COOKIE_NAME}=${encodeURIComponent(value)}; Max-Age=${COOKIE_MAX_AGE}; Path=/; SameSite=Lax${secure}`;
+  };
+
+  const loadGtm = (id) => {
+    if (!id || window.__qualificaGtmLoaded) return;
+    window.__qualificaGtmLoaded = true;
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(id)}`;
+    document.head.appendChild(script);
+  };
+
+  const loadMetaPixel = (id) => {
+    if (!id || window.__qualificaMetaPixelLoaded) return;
+    window.__qualificaMetaPixelLoaded = true;
+
+    if (!window.fbq) {
+      const fbq = (...args) => {
+        fbq.callMethod ? fbq.callMethod(...args) : fbq.queue.push(args);
+      };
+      window.fbq = fbq;
+      window._fbq = fbq;
+      fbq.push = fbq;
+      fbq.loaded = true;
+      fbq.version = "2.0";
+      fbq.queue = [];
+    }
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = "https://connect.facebook.net/en_US/fbevents.js";
+    document.head.appendChild(script);
+
+    window.fbq("init", id);
+    window.fbq("track", "PageView");
+  };
+
+  const loadMarketing = () => {
+    loadGtm(document.body?.dataset.cookieGtmId);
+    loadMetaPixel(document.body?.dataset.cookieMetaPixelId);
+  };
+
+  const closeBanner = (banner) => {
+    banner.classList.add("is-hiding");
+    window.setTimeout(() => banner.remove(), 220);
+  };
+
+  const renderBanner = () => {
+    if (document.querySelector("[data-cookie-banner]")) return;
+
+    const lang = getLang();
+    const text = copy[lang];
+    const banner = document.createElement("section");
+    banner.className = "cookie-banner";
+    banner.dataset.cookieBanner = "";
+    banner.setAttribute("aria-label", text.title);
+    banner.innerHTML = `
+      <div class="cookie-panel">
+        <div class="cookie-copy">
+          <strong>${text.title}</strong>
+          <p>${text.body}</p>
+          <a class="cookie-policy" href="${getPolicyHref(lang)}">${text.policy}</a>
+        </div>
+        <div class="cookie-actions">
+          <button class="cookie-btn cookie-btn-secondary" type="button" data-cookie-reject>${text.reject}</button>
+          <button class="cookie-btn cookie-btn-primary" type="button" data-cookie-accept>${text.accept}</button>
+        </div>
+      </div>
+    `;
+
+    banner.querySelector("[data-cookie-accept]")?.addEventListener("click", () => {
+      setConsent(CONSENT_ACCEPTED);
+      loadMarketing();
+      closeBanner(banner);
+    });
+
+    banner.querySelector("[data-cookie-reject]")?.addEventListener("click", () => {
+      setConsent(CONSENT_REJECTED);
+      closeBanner(banner);
+    });
+
+    document.body.appendChild(banner);
+  };
+
+  const initCookieConsent = () => {
+    const consent = getConsent();
+    if (consent === CONSENT_ACCEPTED) {
+      loadMarketing();
+      return;
+    }
+
+    if (consent !== CONSENT_REJECTED) renderBanner();
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCookieConsent);
+  } else {
+    initCookieConsent();
+  }
+})();
+
 if (navToggle && header && navMenu) {
   navToggle.addEventListener("click", () => {
     const isOpen = header.classList.toggle("menu-open");
@@ -30,6 +184,31 @@ if (navToggle && header && navMenu) {
   });
 }
 
+document.querySelectorAll(".plans").forEach((plans) => {
+  const tabs = Array.from(plans.querySelectorAll("[data-plan-tab]"));
+  const panels = Array.from(plans.querySelectorAll("[data-plan-panel]"));
+
+  if (!tabs.length || !panels.length) return;
+
+  const activatePlanTab = (target) => {
+    tabs.forEach((tab) => {
+      const isActive = tab.dataset.planTab === target;
+      tab.classList.toggle("is-active", isActive);
+      tab.setAttribute("aria-selected", String(isActive));
+      tab.tabIndex = isActive ? 0 : -1;
+    });
+
+    panels.forEach((panel) => {
+      const isActive = panel.dataset.planPanel === target;
+      panel.classList.toggle("is-active", isActive);
+      panel.hidden = !isActive;
+    });
+  };
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => activatePlanTab(tab.dataset.planTab));
+  });
+});
 document.querySelectorAll(".accordion details").forEach((item) => {
   item.addEventListener("toggle", () => {
     if (!item.open) return;
@@ -375,3 +554,35 @@ if (!reduceMotion && "IntersectionObserver" in window) {
 
   document.querySelectorAll(".proof-bar dt").forEach((metric) => countObserver.observe(metric));
 }
+
+(() => {
+  const modal = document.querySelector("[data-career-modal]");
+  const openButton = document.querySelector("[data-career-modal-open]");
+  const frame = document.querySelector("[data-career-modal-frame]");
+
+  if (!modal || !openButton || !frame || modal.dataset.modalBound === "true") return;
+
+  modal.dataset.modalBound = "true";
+
+  const openModal = (event) => {
+    event.preventDefault();
+    if (!frame.src) frame.src = openButton.href;
+    modal.hidden = false;
+    document.documentElement.classList.add("career-modal-open");
+    modal.querySelector(".career-modal-close")?.focus();
+  };
+
+  const closeModal = () => {
+    modal.hidden = true;
+    document.documentElement.classList.remove("career-modal-open");
+    openButton.focus();
+  };
+
+  openButton.addEventListener("click", openModal);
+  modal.querySelectorAll("[data-career-modal-close]").forEach((control) => {
+    control.addEventListener("click", closeModal);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !modal.hidden) closeModal();
+  });
+})();

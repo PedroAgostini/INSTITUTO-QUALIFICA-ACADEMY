@@ -1,0 +1,51 @@
+DirectoryIndex index.html
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} !^qualificaacademy\.com$ [NC]
+  RewriteRule ^ https://qualificaacademy.com%{REQUEST_URI} [R=301,L]
+
+  RewriteRule ^(es|pt-br)$ /$1/ [R=301,L]
+
+  RewriteRule ^terms-of-use\.html$ /terms-of-use/ [R=301,L]
+  RewriteRule ^privacy-policy\.html$ /privacy-policy/ [R=301,L]
+  RewriteRule ^thanks\.html$ /thanks/ [R=301,L]
+  RewriteRule ^es/terminos-de-uso\.html$ /es/terminos-de-uso/ [R=301,L]
+  RewriteRule ^es/politica-de-privacidad\.html$ /es/politica-de-privacidad/ [R=301,L]
+  RewriteRule ^es/gracias\.html$ /es/gracias/ [R=301,L]
+  RewriteRule ^pt-br/termos-de-uso\.html$ /pt-br/termos-de-uso/ [R=301,L]
+  RewriteRule ^pt-br/politica-de-privacidade\.html$ /pt-br/politica-de-privacidade/ [R=301,L]
+  RewriteRule ^pt-br/obrigado\.html$ /pt-br/obrigado/ [R=301,L]
+
+  RewriteRule ^(terms-of-use|privacy-policy|thanks)$ /$1/ [R=301,L]
+  RewriteRule ^es/(terminos-de-uso|politica-de-privacidad|gracias)$ /es/$1/ [R=301,L]
+  RewriteRule ^pt-br/(termos-de-uso|politica-de-privacidade|obrigado)$ /pt-br/$1/ [R=301,L]
+
+  RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
+  RewriteRule ^(.*/)?index\.html$ /$1 [R=301,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+
+  <FilesMatch "\.(html|xml|txt)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+
+  <FilesMatch "\.(css|js|webp|png|jpg|jpeg|svg|ico|mp4|woff2?)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+AddType image/webp .webp
+AddType video/mp4 .mp4

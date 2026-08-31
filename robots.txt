@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /thanks/
+Disallow: /es/gracias/
+Disallow: /pt-br/obrigado/
+
+Sitemap: https://qualificaacademy.com/sitemap.xml
